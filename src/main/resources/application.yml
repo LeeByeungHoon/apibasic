@@ -2,3 +2,12 @@
 # server.port=8181
 server:
   port: 8181
+
+# 로그 설정
+logging:
+  level:
+    root: info
+    com:
+      example:
+        apibasic:
+          req: trace
