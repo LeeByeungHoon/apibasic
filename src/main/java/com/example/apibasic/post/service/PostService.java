@@ -7,12 +7,12 @@ import com.example.apibasic.post.dto.PostResponseDTO;
 import com.example.apibasic.post.entity.PostEntity;
 import com.example.apibasic.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -20,7 +20,10 @@ import java.util.stream.Collectors;
 @Service //스프링 빈 등록
 public class PostService {
 
-    private final PostRepository postRepository;
+    @Autowired
+    public PostRepository postRepository;
+    public PostEntity postEntity;
+
     // 목록 조회 중간처리
     public PostListResponseDTO getList() {
         List<PostEntity> list = postRepository.findAll();
@@ -38,33 +41,36 @@ public class PostService {
                 .count(responseDTOList.size())
                 .posts(responseDTOList)
                 .build();
-
+        log.info(list.toString());
         return listResponseDTO;
     }
 
     // 개별조회
-    public PostResponseDTO getDetail(Long postNo) {
-        PostEntity post = postRepository.findOne(postNo);
-
-        if(post == null) throw new RuntimeException(postNo + "번 게시물이 존재하지 않습니다.");
-
-        return new PostResponseDTO(post);
-
+    public Optional<PostEntity> getDetail(Long postNo) {
+        Optional<PostEntity> post = postRepository.findById(postNo);
+        log.info(post.toString());
+        return post;
     }
 
     public boolean insert(final PostCreateDTO createDTO){
         // dto를 entity 변환 작업
-        PostEntity entity = createDTO.toEntity();
-
-        return postRepository.save(entity);
+        PostEntity entity = PostEntity.builder()
+                        .title(createDTO.getTitle())
+                                .content(createDTO.getContent())
+                                        .writer(createDTO.getWriter())
+                                                .build();
+        postRepository.save(entity);
+        return true;
     }
 
     public boolean update(Long postNo, final PatchCreateDTO patchCreateDTO){
-        final PostEntity post = postRepository.findOne(postNo);
-        final PostEntity entity = patchCreateDTO.toEntity(post);
-        return postRepository.save(entity);
+        Optional<PostEntity> post = postRepository.findById(postNo);
+        PostEntity entity = patchCreateDTO.toEntity(post);
+        postRepository.save(entity);
+        return true;
     }
     public boolean delete(Long postNo){
-        return  postRepository.delete(postNo);
+        postRepository.deleteById(postNo);
+        return true;
     }
 }

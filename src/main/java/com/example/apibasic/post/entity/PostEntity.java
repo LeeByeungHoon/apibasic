@@ -2,29 +2,42 @@ package com.example.apibasic.post.entity;
 
 import com.example.apibasic.post.dto.PostResponseDTO;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 // 게시물의 데이터 자바빈즈
-@Setter@Getter@ToString
+@Getter@Setter@ToString
 @NoArgsConstructor
-@EqualsAndHashCode
 @AllArgsConstructor
+@EqualsAndHashCode(of = "postNo")
 @Builder
+// JPA
+@Entity // JPA 의 Entity 객체
+@Table(name = "tbl_post")
 public class PostEntity {
 
-    public static Long sequence = 1L; // 연속된 일련번호
+    @Id // 기본키 설정
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본키 생성 전략
+    @Column(name = "postNo")
     private Long postNo; // 게시물 식별 번호
+    @Column(nullable = false, length = 10)
     private String writer; // 게시물 작성자 이름
+    @Column(nullable = false, length = 30)
     private String title; // 게시물 제목
+    @Column(nullable = false)
     private String content; // 게시물 내용
-    private List<String> hashTags; // 해시태그 목록
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @CreationTimestamp
     private LocalDateTime createDate; // 작성 시간
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @UpdateTimestamp
     private LocalDateTime modifyDate; // 수정 시간
 
 }

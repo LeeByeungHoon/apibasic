@@ -16,10 +16,10 @@ import java.util.List;
 @Builder
 public class PostResponseDTO {
 
+    private Long postNo;
     private String author; // writer
     private String title;
     private String content;
-    private List<String> hashTags;
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime regDate;
     @JsonFormat(pattern = "yyyy/MM/dd")
@@ -27,11 +27,11 @@ public class PostResponseDTO {
 
     // 엔터티를 DTO로 변환하는 생성자
     public PostResponseDTO(PostEntity entity){
+            this.postNo = entity.getPostNo();
             this.author = entity.getWriter();
             this.content = entity.getContent();
             this.title = entity.getTitle();
             this.regDate = entity.getCreateDate();
-            this.hashTags = entity.getHashTags();
             this.modifyDate = entity.getModifyDate();
     }
 }

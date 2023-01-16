@@ -32,17 +32,14 @@ public class PostCreateDTO {
     @Size(min = 2, max = 5) // 1~20자 사이
     private String title;
     private String content;
-    private List<String> hashTags;
     //PostEntity 로 변환하는 유틸 메서드
     public PostEntity toEntity(){
         return PostEntity
                 .builder()
-                .postNo(PostEntity.sequence++)
                 .writer(this.writer)
                 .content(this.content)
                 .title(this.title)
                 .createDate(LocalDateTime.now())
-                .hashTags(this.hashTags)
                 .build();
     }
 }

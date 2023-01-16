@@ -18,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 // 리소스 : 게시물 (Post)
 /*
@@ -63,7 +63,7 @@ public class PostApiController {
     public ResponseEntity<?> detail(@PathVariable/*("postNo") 생략 가능*/ Long postNo){
         log.info("/posts/{} GET request", postNo);
         try {
-            PostResponseDTO dto = postService.getDetail(postNo);
+            Optional<PostEntity> dto = postService.getDetail(postNo);
             return ResponseEntity.ok().body(dto);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
