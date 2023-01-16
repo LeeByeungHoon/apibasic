@@ -5,6 +5,7 @@ package com.example.apibasic.jpabasic.repository;
 import com.example.apibasic.jpabasic.entity.Gender;
 import com.example.apibasic.jpabasic.entity.MemberEntity;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,34 @@ class MemberRepositoryTest {
     @Autowired
     MemberRepository memberRepository;
 
+
+    // @BeforeEach - 각 테스트를 실행하기 전에 실행되는 내용
+    @BeforeEach
+    void bulkInsert() {
+        MemberEntity saveMember1 = MemberEntity.builder()
+                .account("zzz1234")
+                .password("1234")
+                .nickname("꾸러긔")
+                .gender(FEMALE)
+                .build();
+        MemberEntity saveMember2 = MemberEntity.builder()
+                .account("abc4321")
+                .password("4321")
+                .nickname("궁예")
+                .gender(MALE)
+                .build();
+        MemberEntity saveMember3 = MemberEntity.builder()
+                .account("ppp9999")
+                .password("9888")
+                .nickname("찬호박")
+                .gender(MALE)
+                .build();
+
+        memberRepository.save(saveMember1);
+        memberRepository.save(saveMember2);
+        memberRepository.save(saveMember3);
+    }
+
     // 테스트 메서드
     // 테스트는 여러번 돌려도 성공한 테스트는 계속 성공해야 한다.
     // 단언 (Assertion) : 강력히 주장한다.
@@ -35,14 +64,14 @@ class MemberRepositoryTest {
     void saveTest() {
         // given - when - then 패턴
         // given : 테스트시 주어지는 데이터
-        MemberEntity saveMember = MemberEntity.builder()
-                .account("zzz1234")
-                .password("1234")
-                .nickname("꾸러긔")
-                .gender(FEMALE)
-                .build();
-        // when : 실제 테스트 상황
-        memberRepository.save(saveMember); // insert쿼리 실행
+//        MemberEntity saveMember = MemberEntity.builder()
+//                .account("zzz1234")
+//                .password("1234")
+//                .nickname("꾸러긔")
+//                .gender(FEMALE)
+//                .build();
+//        // when : 실제 테스트 상황
+//        memberRepository.save(saveMember); // insert쿼리 실행
 
         Optional<MemberEntity> foundMember = memberRepository.findById(1L);// pk기반 단일 행 조회
 
@@ -65,28 +94,9 @@ class MemberRepositoryTest {
     @Rollback
     void findAllTest() {
         // given
-        MemberEntity saveMember1 = MemberEntity.builder()
-                .account("zzz1234")
-                .password("1234")
-                .nickname("꾸러긔")
-                .gender(FEMALE)
-                .build();
-        MemberEntity saveMember2 = MemberEntity.builder()
-                .account("abc4321")
-                .password("4321")
-                .nickname("궁예")
-                .gender(MALE)
-                .build();
-        MemberEntity saveMember3 = MemberEntity.builder()
-                .account("ppp9999")
-                .password("9888")
-                .nickname("찬호박")
-                .gender(MALE)
-                .build();
+
         // when
-        memberRepository.save(saveMember1);
-        memberRepository.save(saveMember2);
-        memberRepository.save(saveMember3);
+
 
         List<MemberEntity> memberEntityList = memberRepository.findAll();
 
@@ -98,4 +108,44 @@ class MemberRepositoryTest {
         memberEntityList.forEach(System.out::println);
     }
 
+    @Test
+    @DisplayName("회원 데이터를 3개 등록하고 그 중 하나의 회원을 삭제해야 한다.")
+    @Transactional
+    @Rollback
+    void deleteTest() {
+        // given
+        Long userCode = 2L;
+        // when
+        memberRepository.deleteById(userCode);
+        Optional<MemberEntity> foundMember = memberRepository.findById(userCode);
+
+        // then
+        assertFalse(foundMember.isPresent());
+        assertEquals(2, memberRepository.findAll().size());
+
+    }
+
+    @Test
+    @DisplayName("2번 회원의 닉네임과 성별을 수정해야 한다.")
+    @Transactional
+    @Rollback
+    void modifyTest(){
+        // given
+        Long userCode = 2L;
+        String newNickName = "닭강정";
+        Gender newGender = FEMALE;
+
+        // when
+        // JPA에서 수정은 조회 후 setter로 변경
+        Optional<MemberEntity> foundMember = memberRepository.findById(userCode);
+        foundMember.ifPresent(m -> {
+            m.setNickname(newNickName);
+            m.setGender(newGender);
+        });
+
+        Optional<MemberEntity> modifiedMember = memberRepository.findById(userCode);
+        //then
+        assertEquals("닭강정", modifiedMember.get().getNickname());
+        assertEquals(FEMALE, modifiedMember.get().getGender());
+    }
 }
