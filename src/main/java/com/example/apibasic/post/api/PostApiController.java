@@ -10,6 +10,9 @@ import com.example.apibasic.post.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,10 +69,17 @@ public class PostApiController {
     }
     //게시물 등록
     @PostMapping()
-    public ResponseEntity<?> create(@RequestBody PostCreateDTO createDTO){
+    public ResponseEntity<?> create(@Validated @RequestBody PostCreateDTO createDTO,
+                                    BindingResult result // 검증 에러 정보를 갖고 있는 객체
+    ){
         boolean flag = postService.insert(createDTO);
         log.info("게시물 정보: {}", flag);
+        if (result.hasErrors()){ // 검증에러가 발생할 시 true 리턴
+            List<FieldError> fieldErrors = result.getFieldErrors();
+            return ResponseEntity
+                    .internalServerError().body(fieldErrors.get(0).getDefaultMessage());
 
+        }
         return ResponseEntity.ok().body("INSERT-SUCCESS");
     }
 
