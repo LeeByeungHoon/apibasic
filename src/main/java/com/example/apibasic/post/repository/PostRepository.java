@@ -36,7 +36,6 @@ public class PostRepository {
         PostEntity post = posts.put(postEntity.getPostNo(), postEntity);
         return post != null;
     }
-
     //게시물 삭제
     public boolean delete(Long postNo){
         PostEntity remove = posts.remove(postNo);

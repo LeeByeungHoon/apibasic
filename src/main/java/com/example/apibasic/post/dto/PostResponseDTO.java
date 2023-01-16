@@ -22,6 +22,8 @@ public class PostResponseDTO {
     private List<String> hashTags;
     @JsonFormat(pattern = "yyyy/MM/dd")
     private LocalDateTime regDate;
+    @JsonFormat(pattern = "yyyy/MM/dd")
+    private LocalDateTime modifyDate;
 
     // 엔터티를 DTO로 변환하는 생성자
     public PostResponseDTO(PostEntity entity){
@@ -30,5 +32,6 @@ public class PostResponseDTO {
             this.title = entity.getTitle();
             this.regDate = entity.getCreateDate();
             this.hashTags = entity.getHashTags();
+            this.modifyDate = entity.getModifyDate();
     }
 }

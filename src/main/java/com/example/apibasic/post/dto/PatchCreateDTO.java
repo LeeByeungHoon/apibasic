@@ -13,20 +13,20 @@ import java.util.List;
 @Builder
 public class PatchCreateDTO {
 
-    private String writer;
     private String title;
     private String content;
-    private List<String> hashTags;
+
     //PostEntity 로 변환하는 유틸 메서드
-    public PostEntity toEntity(Long postNo){
+    public PostEntity toEntity(PostEntity entity){
         return PostEntity
                 .builder()
-                .postNo(postNo)
-                .writer(this.writer)
+                .postNo(entity.getPostNo())
+                .writer(entity.getWriter())
                 .content(this.content)
                 .title(this.title)
-                .createDate(LocalDateTime.now())
-                .hashTags(this.hashTags)
+                .createDate(entity.getCreateDate())
+                .modifyDate(LocalDateTime.now())
+                .hashTags(entity.getHashTags())
                 .build();
     }
 }
