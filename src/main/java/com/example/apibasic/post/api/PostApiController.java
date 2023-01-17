@@ -49,7 +49,7 @@ public class PostApiController {
         // service 에서 오류를 전달하면 처리
         //ctrl + alt + t -> try catch
         try {
-            PostListResponseDTO listResponseDTO = postService.getList();
+            PostListResponseDTO listResponseDTO = postService.getList(pageRequestDTO);
             return ResponseEntity.ok().body(listResponseDTO);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
