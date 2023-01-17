@@ -253,4 +253,14 @@ class MemberRepositoryTest {
             assertTrue(m.getNickname().contains("박"));
         });
     }
+    @Test
+    @DisplayName("JPQL을 사용해서 닉네임에 '궁예'인 회원을 삭제해야 한다 한다.")
+    void jpqlTest4() {
+        // given
+        String nickName = "궁예";
+        // when
+        memberRepository.deleteByNickname(nickName);
+        // then
+
+    }
 }

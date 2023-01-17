@@ -3,8 +3,10 @@ package com.example.apibasic.jpabasic.repository;
 import com.example.apibasic.jpabasic.entity.Gender;
 import com.example.apibasic.jpabasic.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 // JPA로 CRUD Operation을 하려면 JpaRepository 인터페이스를 상속
@@ -33,4 +35,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
 
     @Query("select m from MemberEntity m where m.nickname like %:nick%")
     List<MemberEntity> getMembersByNickName(String nick);
+
+    @Transactional
+    @Modifying
+    @Query("delete from MemberEntity m where m.nickname=:nick")
+    void deleteByNickname(String nick);
 }
