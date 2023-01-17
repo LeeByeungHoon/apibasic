@@ -1,8 +1,8 @@
-package com.example.apibasic.jpabasic.repository;
+package com.example.apibasic.post.repository;
 
 import com.example.apibasic.post.dto.PageRequestDTO;
+import com.example.apibasic.post.dto.PageResponseDTO;
 import com.example.apibasic.post.entity.PostEntity;
-import com.example.apibasic.post.repository.PostRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,33 +46,41 @@ class PageTest {
         PageRequest pageInfo = PageRequest.of(
                 dto.getPage() - 1,
                 dto.getSizePerPage(),
-                Sort.Direction.DESC, // 내림차 정렬
+                Sort.Direction.DESC,  // 내림차 정렬
                 "createDate" // 정렬 기준 필드
         );
+
         Page<PostEntity> postEntities = postRepository.findAll(pageInfo);
 
         // 실제 조회된 데이터
         List<PostEntity> contents = postEntities.getContent();
+
         int totalPages = postEntities.getTotalPages();
         long totalElements = postEntities.getTotalElements();
-        boolean prev = postEntities.getPageable().hasPrevious();
-        postEntities.getPageable().getPageNumber();
+
         System.out.println("contents.size() = " + contents.size());
+        System.out.println("totalPages = " + totalPages);
+        System.out.println("totalElements = " + totalElements);
+
         contents.forEach(System.out::println);
+
+
     }
+
+
     @Test
     @DisplayName("제목에 3이 포함된 결과를 검색 후 1페이지 정보를 조회해야 한다.")
     void pageTest2() {
         //given
         String title = "3";
         PageRequest pageRequest = PageRequest.of(
-                0,
+                5,
                 10,
                 Sort.Direction.DESC,
                 "createDate");
 
         Slice<PostEntity> postEntityPage
-                = postRepository.findByTitleContainning(title, pageRequest);
+                = postRepository.findByTitleContaining(title, pageRequest);
 
         List<PostEntity> contents = postEntityPage.getContent();
 
@@ -81,6 +89,13 @@ class PageTest {
         System.out.println("prev = " + prev);
         System.out.println("next = " + next);
 
+
         contents.forEach(System.out::println);
+
+        // 페이지 정보
+        PageResponseDTO<PostEntity> dto = new PageResponseDTO<PostEntity>((Page<PostEntity>) postEntityPage);
+        System.out.println("dto = " + dto);
     }
+
+
 }
