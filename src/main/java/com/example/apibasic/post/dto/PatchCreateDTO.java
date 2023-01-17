@@ -23,6 +23,7 @@ public class PatchCreateDTO {
                 .postNo(entity.getPostNo())
                 .writer(entity.getWriter())
                 .content(this.content)
+                .createDate(entity.getCreateDate())
                 .title(this.title)
                 .build();
     }

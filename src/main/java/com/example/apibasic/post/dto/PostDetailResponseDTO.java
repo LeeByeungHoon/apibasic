@@ -11,10 +11,10 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(callSuper = true)
 public class PostDetailResponseDTO extends PostResponseDTO {
 
-    private LocalDateTime modDate;
+    private LocalDateTime modifyDate;
 
     public PostDetailResponseDTO(PostEntity entity) {
         super(entity);
-        this.modDate = entity.getModifyDate();
+        this.modifyDate = entity.getModifyDate();
     }
 }
