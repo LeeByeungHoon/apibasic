@@ -1,9 +1,6 @@
 package com.example.apibasic.post.api;
 
-import com.example.apibasic.post.dto.PatchCreateDTO;
-import com.example.apibasic.post.dto.PostCreateDTO;
-import com.example.apibasic.post.dto.PostListResponseDTO;
-import com.example.apibasic.post.dto.PostResponseDTO;
+import com.example.apibasic.post.dto.*;
 import com.example.apibasic.post.entity.PostEntity;
 import com.example.apibasic.post.repository.PostRepository;
 import com.example.apibasic.post.service.PostService;
@@ -63,7 +60,7 @@ public class PostApiController {
     public ResponseEntity<?> detail(@PathVariable/*("postNo") 생략 가능*/ Long postNo){
         log.info("/posts/{} GET request", postNo);
         try {
-            Optional<PostEntity> dto = postService.getDetail(postNo);
+            PostDetailResponseDTO dto = postService.getDetail(postNo);
             return ResponseEntity.ok().body(dto);
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
@@ -78,26 +75,50 @@ public class PostApiController {
     public ResponseEntity<?> create(@Validated @RequestBody PostCreateDTO createDTO,
                                     BindingResult result // 검증 에러 정보를 갖고 있는 객체
     ){
-        boolean flag = postService.insert(createDTO);
-        log.info("게시물 정보: {}", flag);
+        PostDetailResponseDTO flag = null;
+
+        if (createDTO == null){
+            return ResponseEntity.badRequest().body("게시물 정보를 전달해주세요.");
+        }
         if (result.hasErrors()){ // 검증에러가 발생할 시 true 리턴
             List<FieldError> fieldErrors = result.getFieldErrors();
             return ResponseEntity
                     .internalServerError().body(fieldErrors.get(0).getDefaultMessage());
-
         }
-        return ResponseEntity.ok().body("INSERT-SUCCESS");
+        try {
+            flag = postService.insert(createDTO);
+            return ResponseEntity.ok().body(flag);
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
+        }
     }
 
     //게시물 수정
     @PatchMapping("/{postNo}")
-    public boolean modify(@RequestBody PatchCreateDTO patchCreateDTO, @PathVariable Long postNo){
+    public ResponseEntity modify(@RequestBody PatchCreateDTO patchCreateDTO, @PathVariable Long postNo){
         log.info("/posts/{} Patch request", postNo);
-        return postService.update(postNo, patchCreateDTO);
+        try {
+            PostDetailResponseDTO responseDTO = postService.update(postNo, patchCreateDTO);
+            return ResponseEntity
+                    .ok()
+                    .body(responseDTO);
+        } catch (RuntimeException e) {
+            log.error("modify fail : caused by - {}", e.getMessage());
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
+        }
     }
     @DeleteMapping("/{postNo}")
-    public boolean delete(@PathVariable/*("postNo") 생략 가능*/ Long postNo){
+    public ResponseEntity delete(@PathVariable/*("postNo") 생략 가능*/ Long postNo){
         log.info("/posts/{} delete request", postNo);
-        return postService.delete(postNo);
+        try {
+            postService.delete(postNo);
+            return ResponseEntity.ok().body("Delete Success");
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
     }
 }

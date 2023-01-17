@@ -17,15 +17,13 @@ public class PatchCreateDTO {
     private String content;
 
     //PostEntity 로 변환하는 유틸 메서드
-    public PostEntity toEntity(Optional<PostEntity> entity){
+    public PostEntity toEntity(PostEntity entity){
         return PostEntity
                 .builder()
-                .postNo(entity.get().getPostNo())
-                .writer(entity.get().getWriter())
+                .postNo(entity.getPostNo())
+                .writer(entity.getWriter())
                 .content(this.content)
                 .title(this.title)
-                .createDate(entity.get().getCreateDate())
-                .modifyDate(LocalDateTime.now())
                 .build();
     }
 }

@@ -1,9 +1,6 @@
 package com.example.apibasic.post.service;
 
-import com.example.apibasic.post.dto.PatchCreateDTO;
-import com.example.apibasic.post.dto.PostCreateDTO;
-import com.example.apibasic.post.dto.PostListResponseDTO;
-import com.example.apibasic.post.dto.PostResponseDTO;
+import com.example.apibasic.post.dto.*;
 import com.example.apibasic.post.entity.PostEntity;
 import com.example.apibasic.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,31 +43,32 @@ public class PostService {
     }
 
     // 개별조회
-    public Optional<PostEntity> getDetail(Long postNo) {
-        Optional<PostEntity> post = postRepository.findById(postNo);
-        log.info(post.toString());
-        return post;
+    public PostDetailResponseDTO getDetail(Long postNo) {
+
+        PostEntity post = postRepository.findById(postNo).orElseThrow(() -> new RuntimeException("검색된 자료가 없습니다."));
+        return new PostDetailResponseDTO(post);
     }
 
-    public boolean insert(final PostCreateDTO createDTO){
+    public PostDetailResponseDTO insert(final PostCreateDTO createDTO) throws RuntimeException{
         // dto를 entity 변환 작업
+
         PostEntity entity = PostEntity.builder()
-                        .title(createDTO.getTitle())
-                                .content(createDTO.getContent())
-                                        .writer(createDTO.getWriter())
-                                                .build();
-        postRepository.save(entity);
-        return true;
+                .title(createDTO.getTitle())
+                .content(createDTO.getContent())
+                .writer(createDTO.getWriter())
+                .build();
+        PostEntity savedPost = postRepository.save(entity);
+        // 저장된 객체를 DTO로 변환해서 반환
+        return new PostDetailResponseDTO(savedPost);
     }
 
-    public boolean update(Long postNo, final PatchCreateDTO patchCreateDTO){
-        Optional<PostEntity> post = postRepository.findById(postNo);
+    public PostDetailResponseDTO update(Long postNo, final PatchCreateDTO patchCreateDTO) throws RuntimeException{
+        final PostEntity post = postRepository.findById(postNo).orElseThrow(() -> new RuntimeException("수정 전 데이터가 존재하지 않습니다."));
         PostEntity entity = patchCreateDTO.toEntity(post);
         postRepository.save(entity);
-        return true;
+        return new PostDetailResponseDTO(entity);
     }
-    public boolean delete(Long postNo){
+    public void delete(Long postNo) throws RuntimeException{
         postRepository.deleteById(postNo);
-        return true;
     }
 }

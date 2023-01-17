@@ -1,17 +1,10 @@
 package com.example.apibasic.post.dto;
 
 import com.example.apibasic.post.entity.PostEntity;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import lombok.*;
-
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
+//ctrl + alt + O 불필요 요소 제거
 
 @Setter@Getter@ToString
 @NoArgsConstructor
@@ -26,10 +19,10 @@ public class PostCreateDTO {
         NotBlank : null 이거나 빈 문자열일 경우 에러발생
      */
     @NotBlank
-    @Size(min = 2, max = 5) // 글자수는 2~5자 사이
+    @Size(min = 1, max = 20) // 글자수는 2~5자 사이
     private String writer;
     @NotBlank
-    @Size(min = 2, max = 5) // 1~20자 사이
+    @Size(min = 1, max = 20) // 1~20자 사이
     private String title;
     private String content;
     //PostEntity 로 변환하는 유틸 메서드
@@ -39,7 +32,6 @@ public class PostCreateDTO {
                 .writer(this.writer)
                 .content(this.content)
                 .title(this.title)
-                .createDate(LocalDateTime.now())
                 .build();
     }
 }

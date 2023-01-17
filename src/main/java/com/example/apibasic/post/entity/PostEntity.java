@@ -25,18 +25,15 @@ public class PostEntity {
 
     @Id // 기본키 설정
     @GeneratedValue(strategy = GenerationType.IDENTITY) // 기본키 생성 전략
-    @Column(name = "postNo")
-    private Long postNo; // 게시물 식별 번호
+    private Long postNo; // 게시물 식별 번호 post_no로 저장됨
     @Column(nullable = false, length = 10)
     private String writer; // 게시물 작성자 이름
     @Column(nullable = false, length = 30)
     private String title; // 게시물 제목
     @Column(nullable = false)
     private String content; // 게시물 내용
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @CreationTimestamp
     private LocalDateTime createDate; // 작성 시간
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @UpdateTimestamp
     private LocalDateTime modifyDate; // 수정 시간
 
