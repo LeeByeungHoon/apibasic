@@ -10,10 +10,11 @@ import org.hibernate.annotations.UpdateTimestamp;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 // 게시물의 데이터 자바빈즈
-@Getter@Setter@ToString
+@Getter@Setter@ToString(exclude = "hashTags")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "postNo")
@@ -32,6 +33,9 @@ public class PostEntity {
     private String title; // 게시물 제목
     @Column(nullable = false)
     private String content; // 게시물 내용
+
+    @OneToMany(mappedBy = "post")
+    private List<HashTagEntity> hashTags = new ArrayList<>();
     @CreationTimestamp
     private LocalDateTime createDate; // 작성 시간
     @UpdateTimestamp

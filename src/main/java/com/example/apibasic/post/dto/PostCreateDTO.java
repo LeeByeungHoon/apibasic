@@ -1,9 +1,11 @@
 package com.example.apibasic.post.dto;
 
+import com.example.apibasic.post.entity.HashTagEntity;
 import com.example.apibasic.post.entity.PostEntity;
 import lombok.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.List;
 //ctrl + alt + O 불필요 요소 제거
 
 @Setter@Getter@ToString
@@ -25,6 +27,7 @@ public class PostCreateDTO {
     @Size(min = 1, max = 20) // 1~20자 사이
     private String title;
     private String content;
+    private List<String> hashTags;
     //PostEntity 로 변환하는 유틸 메서드
     public PostEntity toEntity(){
         return PostEntity

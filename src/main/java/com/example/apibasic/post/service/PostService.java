@@ -1,7 +1,9 @@
 package com.example.apibasic.post.service;
 
 import com.example.apibasic.post.dto.*;
+import com.example.apibasic.post.entity.HashTagEntity;
 import com.example.apibasic.post.entity.PostEntity;
+import com.example.apibasic.post.repository.HashTagRepository;
 import com.example.apibasic.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,9 +23,8 @@ import java.util.stream.Collectors;
 public class PostService {
 
     @Autowired
-    public PostRepository postRepository;
-    public PostEntity postEntity;
-
+    private final PostRepository postRepository;
+    private final HashTagRepository hashTagRepository;
     // 목록 조회 중간처리
     public PostListResponseDTO getList(PageRequestDTO pageRequestDTO) {
 
@@ -70,6 +71,18 @@ public class PostService {
                 .writer(createDTO.getWriter())
                 .build();
         PostEntity savedPost = postRepository.save(entity);
+
+        // hashtag 를 db에 저장
+        List<String> hashTags = createDTO.getHashTags();
+
+        // 해시태그 문자열 리스트에서 문자열들을 하나하나 추출한 뒤
+        // 해시태그 엔터티로 만들고 그 엔터티를 데이터베이스에 저장한다.
+        for (String ht : hashTags) {
+            HashTagEntity tagEntity = HashTagEntity.builder()
+                    .tagName(ht)
+                    .build();
+            hashTagRepository.save(tagEntity);
+        }
         // 저장된 객체를 DTO로 변환해서 반환
         return new PostDetailResponseDTO(savedPost);
     }
